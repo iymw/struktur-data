@@ -24,11 +24,11 @@ int hashFunction(string password)
 void registerAkun()
 {
     string username, password, fullname;
-    cout << "Masukkan Full Name: ";
+    cout << "Masukkan Username: " << endl;
     cin >> username;
-    cout << "Masukkan NRP: " << " ";
+    cout << "Masukkan Password: " << endl;
     cin >> password;
-    cout << "Masukkan Department: " << " ";
+    cout << "Masukkan Nama Lengkap: " << endl;
     cin >> fullname;
 
     string hash_key = to_string(hashFunction(password));
@@ -44,6 +44,8 @@ void registerAkun()
 void loginAkun()
 {
     string username, password;
+    cout << "Masukkan Username: " << endl;
+    cin >> username;
     cout << "Masukkan Password: " << endl;
     cin >> password;
 
@@ -55,8 +57,8 @@ void loginAkun()
         cout << "Login berhasil!" << endl
              << endl;
         cout << "==== Account Details ====" << endl;
-        cout << "Full Name: " << dataAkun[hash_key]["username"] << endl;
-        cout << "Department: " << dataAkun[hash_key]["fullname"] << endl;
+        cout << "Username: " << dataAkun[hash_key]["username"] << endl;
+        cout << "Fullname: " << dataAkun[hash_key]["username"] << endl;
     }
     else
     {
@@ -84,8 +86,8 @@ void menu()
 
         cout << endl;
         cout << "==== MENU ====" << endl;
-        cout << "1. Register Data" << endl;
-        cout << "2. Data Confirmation" << endl;
+        cout << "1. Register" << endl;
+        cout << "2. Login" << endl;
         cout << "3. Exit" << endl;
 
         cout << endl;
@@ -116,21 +118,3 @@ int main()
 {
     menu();
 }
-
-
-/*
-
-1. Program tersebut menerima input berupa nama lengkap, NRP, dan departemen
-2. NRP berperan sebagai angka khusus yang akan dihashing menggunakan pola berikut:
-    int num = 0;
-    const int PRIME_CONST = 7;
-    const int DENOMINATOR = 26;
-
-    for (int i = 0; i < password.length(); i++)
-    {
-        num += password[i] * pow(PRIME_CONST, i);
-        num %= DENOMINATOR;
-    }
-3. Apabila user memilih opsi nomor 2, maka user diminta untuk menginput NRP sebagai metode pengecekan data
-4. Apabila data tersebut sudah terdaftar, maka program akan mengeluarkan output sesuai dengan input pada opsi nomor 1
-*/

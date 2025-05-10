@@ -1,89 +1,93 @@
-#include <iostream>
-#include <vector>
-#include <map>
-#include <queue>
-#include <sstream>
+#include <bits/stdc++.h>
 using namespace std;
 
-void displayFastestPath(map<int, int>& parent, int destination) {
-    vector<int> path;
-    int current = destination;
+void bfs(vector<vector<int>>& graph, int S, vector<int>& par, vector<int>& dist) {
+    queue<int> q;
+    dist[S] = 0;
+    q.push(S);
 
-    while (current != -1) {
-        path.insert(path.begin(), current);
-        current = parent[current];
-    }
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
 
-    for (int i = 0; i < path.size(); ++i) {
-        cout << path[i];
-        if (i != path.size() - 1) {
-            cout << " ";
+        for (int neighbour : graph[node]) {
+            if (dist[neighbour] == 1e9) {
+                par[neighbour] = node;
+                dist[neighbour] = dist[node] + 1;
+                q.push(neighbour);
+            }
         }
     }
-    cout << endl;
+}
+
+void printShortestDistance(vector<vector<int>>& graph, int S, int D, int V, unordered_map<int, int>& um) {
+    vector<int> par(V, -1);
+
+    vector<int> dist(V, 1e9);
+
+    bfs(graph, S, par, dist);
+
+    if (dist[D] == 1e9) {
+        return;
+    }
+
+    vector<int> path;
+    int currentNode = D;
+    path.push_back(D);
+    while (par[currentNode] != -1) {
+        path.push_back(par[currentNode]);
+        currentNode = par[currentNode];
+    }
+
+    for (int i = path.size() - 1; i >= 0; i--) cout << um[path[i]] << " ";
 }
 
 int main() {
-    map<int, vector<int>> graph;
+    int a, b, v = 6, nums = v, x = 0;
+    vector<int> temp;
+    vector<vector<int>> adj(v), edges;
+    unordered_map<int, int> um, reverse_um;
+
+    while (nums >= 1) {
+        cin >> a >> b;
+
+        if (um.find(a) == um.end()) {
+            um[a] = x;
+            reverse_um[x] = a;
+            x++;
+        }
+        if (um.find(b) == um.end()) {
+            um[b] = x;
+            reverse_um[x] = b;
+            x++;
+        }
+
+        temp.push_back(um[a]);
+        temp.push_back(um[b]);
+        edges.push_back(temp);
+        temp.clear();
+
+        adj[um[a]].push_back(um[b]);
+
+        nums--;
+    }
+
     string input;
+    cin >> input;
 
-    int maxVertex = -1;
-
-    while (getline(cin, input)) {
-        if (input == "stop") {
-            break;
+    for (int i = 0; i < adj.size(); i++) {
+        for (int j = 0; j < adj[i].size(); j++) {
+            cout << reverse_um[i] << " " << reverse_um[adj[i][j]] << " ";
         }
-        stringstream ss(input);
-        int vertex, edge;
-        ss >> vertex >> edge;
-        graph[vertex].push_back(edge);
-
-        maxVertex = max(maxVertex, max(vertex, edge));
+        cout << "\n";
     }
 
-    for (auto it = graph.begin(); it != graph.end(); ++it) {
-        cout << it->first << " ";
-        for (int j = 0; j < it->second.size(); ++j) {
-            cout << it->second[j];
-            if (j != it->second.size() - 1) {
-                cout << " " << it->first << " ";
-            }
-        }
-        cout << endl;
+    vector<vector<int>> graph(v);
+    for (auto edge : edges) {
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
     }
 
-    cout << endl;
-
-    if (!graph.empty()) {
-        queue<int> q;
-        map<int, bool> visited;
-        map<int, int> parent;
-
-        int start = graph.begin()->first;
-        int destination = maxVertex;
-
-        q.push(start);
-        visited[start] = true;
-        parent[start] = -1;
-
-        while (!q.empty()) {
-            int current = q.front();
-            q.pop();
-
-            if (current == destination) {
-                displayFastestPath(parent, destination);
-                break;
-            }
-
-            for (int i = 0; i < graph[current].size(); ++i) {
-                if (!visited[graph[current][i]]) {
-                    q.push(graph[current][i]);
-                    visited[graph[current][i]] = true;
-                    parent[graph[current][i]] = current;
-                }
-            }
-        }
-    }
-
+    printShortestDistance(graph, edges[0][0], edges[5][1], v, reverse_um);
     return 0;
 }
